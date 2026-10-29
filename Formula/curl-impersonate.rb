@@ -1,46 +1,43 @@
 class CurlImpersonate < Formula
-  desc "Impersonate version of curl"
-  homepage "https://github.com/lwthiker/curl-impersonate"
-  url "https://github.com/lwthiker/curl-impersonate/archive/refs/tags/v0.6.1.tar.gz"
-  sha256 "b89e055074d202aa457d2479a4b33f6a67e3e36a7bf4588755a9c97b3dd824ac"
+  desc "Curl build that impersonates browser TLS/HTTP fingerprints"
+  homepage "https://github.com/lexiforest/curl-impersonate"
+  version "2.3.1"
   license "MIT"
 
-  depends_on "autoconf" => :build
-  depends_on "automake" => :build
-  depends_on "cmake" => :build
-  depends_on "libtool" => :build
-  depends_on "make" => :build
-  depends_on "ninja" => :build
+  depends_on "ca-certificates"
 
-  depends_on "go" # for chrome only
-  depends_on "libidn2"
-  depends_on "rtmpdump"
-  depends_on "zstd"
-
-  def install
-    inreplace "configure", %r{/usr/local}, prefix
-
-    mkdir "build" do
-      system "../configure"
-
-      ENV.deparallelize do
-        system "gmake", "chrome-build"
-      end
-
-      system "gmake", "chrome-checkbuild"
-
-      system "gmake", "chrome-install"
+  on_macos do
+    on_arm do
+      url "https://github.com/lexiforest/curl-impersonate/releases/download/v2.3.1/curl-impersonate-v2.3.1.arm64-macos.tar.gz"
+      sha256 "0c7224fe24f576c7617ec177630ccfd09adf0278a22b21f0ff07d48db77d9b58"
+    end
+    on_intel do
+      url "https://github.com/lexiforest/curl-impersonate/releases/download/v2.3.1/curl-impersonate-v2.3.1.x86_64-macos.tar.gz"
+      sha256 "3a13ed40f7fb65b5d40aa037102a565fc0f38d32277d602e8f3d1a10774423f6"
     end
   end
 
-  test do
-    version = shell_output("#{bin}/curl-impersonate-chrome --version")
+  on_linux do
+    on_arm do
+      url "https://github.com/lexiforest/curl-impersonate/releases/download/v2.3.1/curl-impersonate-v2.3.1.aarch64-linux-gnu.tar.gz"
+      sha256 "9a8009cc87d950374a85645b771e422e855fc070f3ab099ba7ab944755cd54c3"
+    end
+    on_intel do
+      url "https://github.com/lexiforest/curl-impersonate/releases/download/v2.3.1/curl-impersonate-v2.3.1.x86_64-linux-gnu.tar.gz"
+      sha256 "0d8551cc1620be3c40c6f42d0b46c7077e0fe2a1a28a69d659e49e4f412cd0a0"
+    end
+  end
 
-    # same as in chrome-checkbuild
-    assert_match "libcurl", version
-    assert_match "zlib", version
+  def install
+    bin.install Dir["curl*"]
+  end
+
+  test do
+    version = shell_output("#{bin}/curl-impersonate --version")
+
+    assert_match "curl", version
+    assert_match "BoringSSL", version
     assert_match "brotli", version
     assert_match "nghttp2", version
-    assert_match "BoringSSL", version
   end
 end
