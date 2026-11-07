@@ -1,11 +1,11 @@
 cask "stockbit" do
-  version "2.7.4"
-  sha256 "0b71ab9c99e5cc2076deadf89c4a4b187fd6f6317806201d7bd36d2bcb167688"
+  version "2.8.1"
+  sha256 "b28479c2df8ec28203d4348b7f2a3f29a545ce5c88dd6b3bcc8df10010bcc4db"
 
   url "https://sda-release-v2.stockbit.com/release/#{version}/macos/Stockbit.dmg",
       user_agent: :fake
   name "Stockbit"
-  desc "Stockbit adalah aplikasi untuk kamu yang ingin berdiskusi, analisa dan investasi saham dalam satu tempat."
+  desc "Aplikasi untuk diskusi, analisis, dan investasi saham"
   homepage "https://stockbit.com/"
 
   livecheck do
@@ -14,6 +14,7 @@ cask "stockbit" do
   end
 
   auto_updates true
+  depends_on :macos
 
   app "Stockbit.app"
 
